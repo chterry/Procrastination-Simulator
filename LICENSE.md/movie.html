@@ -1,0 +1,62 @@
+//this code was programmed by hand by myself, and I am not a computer scientist by any means, so there may be redundancies or uneeded variables used here.
+
+//to get the appearance of a TV screen, you should place a plane in front off a television model and drag a movie file onto it to create a movie texture. Sometimes times the audio from the file will not play along with the video, so you will have to also drag a seperate audio file onto the plane. The plane should also have an invisible child object attached to it that will be used to trigger the movie to play. All sources and textures mentioned in this file should be dragged onto the plane.
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class failaudio : MonoBehaviour {
+
+    public AudioSource Sound;
+    public AudioClip failspeech;
+    public AudioClip Godbrother;
+    public AudioClip Opening;
+    public MovieTexture movie;
+    public bool alreadyPlayed = false;
+    public bool deadchild = false;
+    public bool fail = false;
+    // Use this for initialization
+    void Start()
+    {
+        Sound = GetComponent<AudioSource>();
+        if (!fail)
+        {
+            Sound.Play(); //this plays the initial opening speech upon game startup
+
+        }
+    }
+
+    // Update is called once per frame
+    void Update ()
+    {
+		
+	}
+
+    private void OnCollisionEnter(Collision collision) //using "OnTriggerEnter" is also valid
+    {
+        if (!alreadyPlayed)
+        {
+            Sound.Stop();
+            Sound.PlayOneShot(failspeech);
+            alreadyPlayed = true; //this prevents the audio from playing multiple times
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+                deadchild = true; //this will allow gbspeech below to start
+                fail = true;
+                Invoke("gbspeech", 45);
+                // this starts the next section with a slight delay to alow time for buffering and sync with the audio
+            }
+        }
+    }
+    void gbspeech ()
+            {
+                if (deadchild == true)
+                {
+            Sound.PlayOneShot(Godbrother);
+            movie.Play();
+
+        }
+    }
+}
